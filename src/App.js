@@ -1,12 +1,10 @@
-import logo from './logo.svg';
-import './App.css';
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import AuthStatus from './components/AuthStatus';
 import WalletConnect from './components/WalletConnect';
-
+import Upload from './components/Upload';
 
 function App() {
   return (
@@ -17,6 +15,7 @@ function App() {
         <Switch>
           <Route path="/login" component={Login} />
           <Route path="/signup" component={Signup} />
+          <Route path="/upload" component={Upload} />
           {/* Add more routes as needed */}
         </Switch>
       </div>
