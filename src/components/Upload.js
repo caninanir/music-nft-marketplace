@@ -1,54 +1,48 @@
 import React, { useState } from 'react';
-import { storage } from '../firebaseConfig';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { storage } from '../firebaseConfig';
 
 export default function Upload() {
-  const [song, setSong] = useState(null);
-  const [cover, setCover] = useState(null);
+  const [mp3File, setMp3File] = useState(null);
+  const [pngFile, setPngFile] = useState(null);
+  const [mp3Url, setMp3Url] = useState('');
+  const [pngUrl, setPngUrl] = useState('');
 
-  const handleSongChange = (e) => {
-    setSong(e.target.files[0]);
+  const handleMP3Upload = async (e) => {
+    e.preventDefault();
+    if (!mp3File) return;
+    const storageRef = ref(storage, `songs/${mp3File.name}`);
+    await uploadBytes(storageRef, mp3File);
+    const url = await getDownloadURL(storageRef);
+    setMp3Url(url);
+    alert("MP3 file uploaded successfully");
   };
 
-  const handleCoverChange = (e) => {
-    setCover(e.target.files[0]);
-  };
-
-  const handleUpload = async () => {
-    if (!song || !cover) {
-      alert("Please select both a song and a cover image.");
-      return;
-    }
-
-    try {
-      // Upload song
-      const songRef = ref(storage, `songs/${song.name}`);
-      await uploadBytes(songRef, song);
-      const songURL = await getDownloadURL(songRef);
-
-      // Upload cover
-      const coverRef = ref(storage, `covers/${cover.name}`);
-      await uploadBytes(coverRef, cover);
-      const coverURL = await getDownloadURL(coverRef);
-
-      alert("Files uploaded successfully!");
-      console.log("Song URL:", songURL);
-      console.log("Cover URL:", coverURL);
-
-      // TODO: Store these URLs in Firestore along with song metadata,
-      // and use songURL and coverURL for smart contract minting.
-    } catch (error) {
-      console.error("File upload failed:", error);
-      alert("File upload failed.");
-    }
+  const handlePNGUpload = async (e) => {
+    e.preventDefault();
+    if (!pngFile) return;
+    const storageRef = ref(storage, `covers/${pngFile.name}`);
+    await uploadBytes(storageRef, pngFile);
+    const url = await getDownloadURL(storageRef);
+    setPngUrl(url);
+    alert("PNG file uploaded successfully");
   };
 
   return (
     <div>
-      <h2>Upload Song</h2>
-      <input type="file" accept="audio/*" onChange={handleSongChange} />
-      <input type="file" accept="image/*" onChange={handleCoverChange} />
-      <button onClick={handleUpload}>Upload</button>
+      <h2>Upload Files</h2>
+      <form onSubmit={handleMP3Upload}>
+        <input type="file" onChange={(e) => setMp3File(e.target.files[0])} accept="audio/mp3" />
+        <button type="submit">Upload MP3</button>
+      </form>
+
+      <form onSubmit={handlePNGUpload}>
+        <input type="file" onChange={(e) => setPngFile(e.target.files[0])} accept="image/png" />
+        <button type="submit">Upload PNG</button>
+      </form>
+
+      {mp3Url && <p>MP3 File URL: {mp3Url}</p>}
+      {pngUrl && <p>PNG File URL: {pngUrl}</p>}
     </div>
   );
 }
