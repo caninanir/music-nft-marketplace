@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ethers } from 'ethers';
 import MusicNFT from '../artifacts/contracts/MusicNFT.json';
 
-const contractAddress = "0xBe817299AA7ed992cAFD22616D69E67d33e5a535"; // Ensure this matches your deployed contract
+const contractAddress = "0xBe817299AA7ed992cAFD22616D69E67d33e5a535";
 
 export default function MintNFT() {
   const [songURL, setSongURL] = useState("");
