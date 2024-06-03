@@ -29,10 +29,10 @@ export default function Marketplace() {
     const contract = new ethers.Contract(contractAddress, MusicNFT.abi, provider);
 
     logMessage('Loading NFTs from the contract...');
-    
+
     try {
       const accounts = await provider.send("eth_requestAccounts", []);
-      const userAddress = accounts[0];
+      const userAddress = ethers.utils.getAddress(accounts[0]).toLowerCase();
       setUserAddress(userAddress);
       logMessage(`User address: ${userAddress}`);
 
@@ -44,7 +44,7 @@ export default function Marketplace() {
         try {
           const song = await contract.getSong(i);
           const price = await contract.getPrice(i);
-          const owner = await contract.getOwner(i);
+          const owner = ethers.utils.getAddress(await contract.getOwner(i)).toLowerCase();
           const item = {
             id: i,
             songURL: song.songURL,
