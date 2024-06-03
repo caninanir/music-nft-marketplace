@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import MusicNFT from '../artifacts/contracts/MusicNFT.json';
 
-const contractAddress = "0xd9145CCE52D386f254917e481eB44e9943F39138";
+const contractAddress = "0xd8b934580fcE35a11B58C6D73aDeE468a2833fa8";
 
 export default function Marketplace() {
   const [nfts, setNfts] = useState([]);

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ethers } from 'ethers';
 import MusicNFT from '../artifacts/contracts/MusicNFT.json';
 
-const contractAddress = "0xd9145CCE52D386f254917e481eB44e9943F39138";
+const contractAddress = "0xd8b934580fcE35a11B58C6D73aDeE468a2833fa8";
 
 export default function MintNFT() {
   const [songURL, setSongURL] = useState("");
@@ -20,6 +20,11 @@ export default function MintNFT() {
       const signer = provider.getSigner();
       const contract = new ethers.Contract(contractAddress, MusicNFT.abi, signer);
 
+      console.log("Minting NFT with the following details:");
+      console.log("Song URL:", songURL);
+      console.log("Cover URL:", coverURL);
+      console.log("Metadata:", metadata);
+
       const transaction = await contract.mintNFT(
         await signer.getAddress(),
         songURL,
@@ -31,7 +36,7 @@ export default function MintNFT() {
       alert("NFT minted successfully!");
     } catch (error) {
       console.error("Minting failed:", error);
-      alert("Minting failed.");
+      alert("Minting failed: " + error.message);
     }
   };
 
