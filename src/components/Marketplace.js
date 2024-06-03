@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import MusicNFT from '../artifacts/contracts/MusicNFT.json';
@@ -16,6 +15,7 @@ export default function Marketplace() {
   }, []);
 
   const logMessage = (message) => {
+    console.log(message);
     setLogs(prevLogs => [...prevLogs, message]);
   };
 
@@ -34,6 +34,7 @@ export default function Marketplace() {
       const accounts = await provider.send("eth_requestAccounts", []);
       const userAddress = accounts[0];
       setUserAddress(userAddress);
+      logMessage(`User address: ${userAddress}`);
 
       const tokenCount = await contract.getTokenCount();
       logMessage(`Token count retrieved: ${tokenCount}`);
@@ -53,7 +54,7 @@ export default function Marketplace() {
             owner
           };
           data.push(item);
-          logMessage(`NFT ${i} - ${song.metadata} loaded.`);
+          logMessage(`NFT ${i} - ${song.metadata} owned by ${owner}`);
         } catch (error) {
           console.error("Error fetching song: ", error);
           logMessage(`Error fetching NFT ${i}: ${error.message}`);
