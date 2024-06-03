@@ -43,9 +43,24 @@ export default function MintNFT() {
   return (
     <div>
       <h2>Mint NFT</h2>
-      <input type="text" value={songURL} onChange={(e) => setSongURL(e.target.value)} placeholder="Song URL" />
-      <input type="text" value={coverURL} onChange={(e) => setCoverURL(e.target.value)} placeholder="Cover URL" />
-      <input type="text" value={metadata} onChange={(e) => setMetadata(e.target.value)} placeholder="Metadata (e.g., Title)" />
+      <input 
+        type="text" 
+        value={songURL} 
+        onChange={(e) => setSongURL(e.target.value)} 
+        placeholder="Song URL" 
+      />
+      <input 
+        type="text" 
+        value={coverURL} 
+        onChange={(e) => setCoverURL(e.target.value)} 
+        placeholder="Cover URL" 
+      />
+      <input 
+        type="text" 
+        value={metadata} 
+        onChange={(e) => setMetadata(e.target.value)} 
+        placeholder="Metadata (e.g., Title)" 
+      />
       <button onClick={mintNFT}>Mint NFT</button>
     </div>
   );
