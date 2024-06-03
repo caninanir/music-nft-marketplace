@@ -1,6 +1,8 @@
+
 import React, { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import MusicNFT from '../artifacts/contracts/MusicNFT.json';
+import './App.css';
 
 const contractAddress = "0x2877bE0188d39B71D8A877D38dd611c6631D97f3";
 
@@ -114,12 +116,12 @@ export default function Marketplace() {
   };
 
   return (
-    <div style={{ padding: '20px' }}>
+    <div className="form-container">
       <h2>NFT Marketplace</h2>
       <button onClick={loadNFTs}>Reload NFTs</button>
       {nfts.map((nft, idx) => (
-        <div key={idx}>
-          <img src={nft.coverURL} alt={nft.metadata} style={{ width: '200px', height: '200px' }} />
+        <div key={idx} className="nft-item">
+          <img src={nft.coverURL} alt={nft.metadata} className="nft-cover" />
           <h3>{nft.metadata}</h3>
           <p>Owner: {nft.owner}</p>
           <audio controls src={nft.songURL}></audio>
@@ -141,7 +143,7 @@ export default function Marketplace() {
         </div>
       ))}
 
-      <div style={{ marginTop: '20px' }}>
+      <div className="form-container">
         <h3>Logs</h3>
         <textarea
           rows="10"

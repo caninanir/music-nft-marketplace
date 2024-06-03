@@ -1,5 +1,7 @@
+
 import React, { useState } from 'react';
 import { ethers } from 'ethers';
+import './App.css';
 
 export default function WalletConnect() {
   const [walletAddress, setWalletAddress] = useState("");
@@ -18,7 +20,7 @@ export default function WalletConnect() {
   };
 
   return (
-    <div>
+    <div className="wallet-connect">
       <button onClick={connectWallet}>Connect Wallet</button>
       {walletAddress && <p>Wallet Address: {walletAddress}</p>}
     </div>

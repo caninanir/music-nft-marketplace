@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth } from '../firebaseConfig';
+import './App.css';
 
 export default function AuthStatus() {
   const [user, setUser] = useState(null);
@@ -22,7 +23,7 @@ export default function AuthStatus() {
   };
 
   return (
-    <div>
+    <div className="form-container">
       {user ? (
         <div>
           <p>Welcome, {user.email}</p>

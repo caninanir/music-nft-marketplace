@@ -7,11 +7,12 @@ import WalletConnect from './components/WalletConnect';
 import MintNFT from './components/MintNFT';
 import Marketplace from './components/Marketplace';
 import Upload from './components/Upload';
+import './App.css';
 
 function App() {
   return (
     <Router>
-      <div>
+      <div className="App">
         <nav>
           <Link to="/">Home</Link>
           <Link to="/login">Login</Link>

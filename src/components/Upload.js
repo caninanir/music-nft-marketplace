@@ -1,6 +1,8 @@
+
 import React, { useState } from 'react';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage } from '../firebaseConfig';
+import './App.css';
 
 export default function Upload() {
   const [mp3File, setMp3File] = useState(null);
@@ -29,7 +31,7 @@ export default function Upload() {
   };
 
   return (
-    <div>
+    <div className="form-container">
       <h2>Upload Files</h2>
       <form onSubmit={handleMP3Upload}>
         <input type="file" onChange={(e) => setMp3File(e.target.files[0])} accept="audio/mp3" />

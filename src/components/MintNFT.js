@@ -1,6 +1,8 @@
+
 import React, { useState } from 'react';
 import { ethers } from 'ethers';
 import MusicNFT from '../artifacts/contracts/MusicNFT.json';
+import './App.css';
 
 const contractAddress = "0x2877bE0188d39B71D8A877D38dd611c6631D97f3";
 
@@ -60,12 +62,8 @@ export default function MintNFT() {
     }
   };
 
-
-
-
-
   return (
-    <div style={{ padding: '20px' }}>
+    <div className="form-container">
       <h2>Mint NFT</h2>
       <input 
         type="text" 
@@ -86,7 +84,6 @@ export default function MintNFT() {
         placeholder="Metadata (e.g., Title)" 
       />
       <button onClick={mintNFT}>Mint NFT</button>
-      
 
       <div style={{ marginTop: '20px' }}>
         <h3>Logs</h3>
