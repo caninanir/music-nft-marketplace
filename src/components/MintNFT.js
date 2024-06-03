@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { ethers } from 'ethers';
 import MusicNFT from '../artifacts/contracts/MusicNFT.json';
 
-const contractAddress = "0x60FFfC11d58C92107c481432b260a4a052Cb6789"; // Ensure this matches your deployed contract
+const contractAddress = "0x707a1dC41eB156cE43580Ca66df717511d42F299"; // Ensure this matches your deployed contract
 
 export default function MintNFT() {
   const [songURL, setSongURL] = useState("");
   const [coverURL, setCoverURL] = useState("");
   const [metadata, setMetadata] = useState("");
+  const [testNum, setTestNum] = useState("");
+  const [fetchedTestNum, setFetchedTestNum] = useState(null);
   const [logs, setLogs] = useState([]);
 
   const logMessage = (message) => {
@@ -26,6 +28,7 @@ export default function MintNFT() {
     }
 
     try {
+      logMessage("Connecting to Ethereum provider...");
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
       const contract = new ethers.Contract(contractAddress, MusicNFT.abi, signer);
@@ -42,6 +45,7 @@ export default function MintNFT() {
         metadata
       );
 
+      logMessage("Transaction sent. Waiting for confirmation...");
       await transaction.wait();
       logMessage("NFT minted successfully!");
 
@@ -53,10 +57,50 @@ export default function MintNFT() {
       console.error("Minting failed:", error);
       logMessage(`Minting failed: ${error.message}`);
       if (error.data && error.data.message) {
-        alert("Minting failed: " + error.data.message);
-      } else {
-        alert("Minting failed: " + error.message);
+        logMessage(`Minting failed: ${error.data.message}`);
       }
+    }
+  };
+
+  const handleSetTestNum = async () => {
+    if (!testNum) {
+      alert("Please provide a test number.");
+      return;
+    }
+
+    try {
+      logMessage("Setting test number...");
+
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(contractAddress, MusicNFT.abi, signer);
+
+      const transaction = await contract.setTestNum(testNum);
+      await transaction.wait();
+      
+      logMessage(`Test number set to ${testNum} successfully!`);
+      setTestNum('');
+    } catch (error) {
+      console.error("Setting test number failed:", error);
+      logMessage(`Setting test number failed: ${error.message}`);
+    }
+  };
+
+  const handleGetTestNum = async () => {
+    try {
+      logMessage("Getting test number...");
+
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(contractAddress, MusicNFT.abi, signer);
+
+      const num = await contract.getTestNum();
+      setFetchedTestNum(num.toNumber());
+
+      logMessage(`Test number fetched: ${num.toNumber()}`);
+    } catch (error) {
+      console.error("Getting test number failed:", error);
+      logMessage(`Getting test number failed: ${error.message}`);
     }
   };
 
@@ -82,6 +126,18 @@ export default function MintNFT() {
         placeholder="Metadata (e.g., Title)" 
       />
       <button onClick={mintNFT}>Mint NFT</button>
+      
+      <h3>Test Contract Connection</h3>
+      <input
+        type="number"
+        value={testNum}
+        onChange={(e) => setTestNum(e.target.value)}
+        placeholder="Test Number"
+      />
+      <button onClick={handleSetTestNum}>Set Test Number</button>
+      <button onClick={handleGetTestNum}>Get Test Number</button>
+      {fetchedTestNum !== null && <p>Current Test Number: {fetchedTestNum}</p>}
+
       <div style={{ marginTop: '20px' }}>
         <h3>Logs</h3>
         <textarea
