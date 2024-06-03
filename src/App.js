@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import AuthStatus from './components/AuthStatus';
 import Login from './components/Login';
 import Signup from './components/Signup';
@@ -24,16 +24,14 @@ function App() {
         <AuthStatus />
         <WalletConnect />
 
-        <Switch>
-          <Route path="/login" component={Login} />
-          <Route path="/signup" component={Signup} />
-          <Route path="/mint" component={MintNFT} />
-          <Route path="/marketplace" component={Marketplace} />
-          <Route path="/upload" component={Upload} />
-          <Route path="/" exact>
-            <h2>Welcome to Music NFT Marketplace</h2>
-          </Route>
-        </Switch>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/mint" element={<MintNFT />} />
+          <Route path="/marketplace" element={<Marketplace />} />
+          <Route path="/upload" element={<Upload />} />
+          <Route path="/" element={<h2>Welcome to Music NFT Marketplace</h2>} />
+        </Routes>
       </div>
     </Router>
   );
