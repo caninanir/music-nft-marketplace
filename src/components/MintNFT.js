@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ethers } from 'ethers';
 import MusicNFT from '../artifacts/contracts/MusicNFT.json';
 
-const contractAddress = "0xd8b934580fcE35a11B58C6D73aDeE468a2833fa8";
+const contractAddress = "0xd8b934580fcE35a11B58C6D73aDeE468a2833fa8"; // Ensure this matches your deployed contract
 
 export default function MintNFT() {
   const [songURL, setSongURL] = useState("");
@@ -12,6 +12,11 @@ export default function MintNFT() {
   const mintNFT = async () => {
     if (!window.ethereum) {
       alert("MetaMask is required to mint an NFT");
+      return;
+    }
+
+    if (!songURL || !coverURL || !metadata) {
+      alert("Please provide all the fields: Song URL, Cover URL, and Metadata.");
       return;
     }
 
@@ -36,7 +41,11 @@ export default function MintNFT() {
       alert("NFT minted successfully!");
     } catch (error) {
       console.error("Minting failed:", error);
-      alert("Minting failed: " + error.message);
+      if (error.data && error.data.message) {
+        alert("Minting failed: " + error.data.message);
+      } else {
+        alert("Minting failed: " + error.message);
+      }
     }
   };
 
