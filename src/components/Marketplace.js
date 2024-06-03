@@ -19,18 +19,23 @@ export default function Marketplace() {
 
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const contract = new ethers.Contract(contractAddress, MusicNFT.abi, provider);
-    
-    const nftCount = await contract.tokenCount(); // assuming the contract has a public tokenCount function
+
+    const tokenCount = await contract._tokenIds();
     const data = [];
 
-    for (let i = 1; i <= nftCount; i++) {
-      const tokenURI = await contract.tokenURI(i); // assuming the contract follows the ERC721 standard and implements this function
-      const tokenMeta = await fetch(tokenURI).then(res => res.json());
-      data.push({
-        id: i,
-        tokenURI,
-        tokenMeta
-      });
+    for (let i = 1; i <= tokenCount; i++) {
+      try {
+        const song = await contract.getSong(i);
+        const item = {
+          id: i,
+          songURL: song.songURL,
+          coverURL: song.coverURL,
+          metadata: song.metadata
+        };
+        data.push(item);
+      } catch (error) {
+        console.error("Error fetching song: ", error);
+      }
     }
 
     setNfts(data);
@@ -46,10 +51,10 @@ export default function Marketplace() {
     const signer = provider.getSigner();
     const contract = new ethers.Contract(contractAddress, MusicNFT.abi, signer);
 
-    // assuming the NFT price is fixed and is defined in the smart contract
-    const price = await contract.price();
-    await contract.buyToken(id, { value: price });
-    alert("NFT purchased successfully!");
+    // assuming the NFT price is fixed and defined in the smart contract
+    // const price = await contract.price();
+    // await contract.buyToken(id, { value: price });
+    alert("NFT purchase functionality to be implemented!");
   };
 
   return (
@@ -57,9 +62,9 @@ export default function Marketplace() {
       <h2>NFT Marketplace</h2>
       {nfts.map((nft, idx) => (
         <div key={idx}>
-          <img src={nft.tokenMeta.image} alt={nft.tokenMeta.name} />
-          <h3>{nft.tokenMeta.name}</h3>
-          <p>{nft.tokenMeta.description}</p>
+          <img src={nft.coverURL} alt={nft.metadata} />
+          <h3>{nft.metadata}</h3>
+          <audio controls src={nft.songURL}></audio>
           <button onClick={() => buyNFT(nft.id)}>Buy with ETH</button>
         </div>
       ))}
