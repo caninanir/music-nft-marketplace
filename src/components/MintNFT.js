@@ -2,12 +2,17 @@ import React, { useState } from 'react';
 import { ethers } from 'ethers';
 import MusicNFT from '../artifacts/contracts/MusicNFT.json';
 
-const contractAddress = "0xd8b934580fcE35a11B58C6D73aDeE468a2833fa8"; // Ensure this matches your deployed contract
+const contractAddress = "0x60FFfC11d58C92107c481432b260a4a052Cb6789"; // Ensure this matches your deployed contract
 
 export default function MintNFT() {
   const [songURL, setSongURL] = useState("");
   const [coverURL, setCoverURL] = useState("");
   const [metadata, setMetadata] = useState("");
+  const [logs, setLogs] = useState([]);
+
+  const logMessage = (message) => {
+    setLogs(prevLogs => [...prevLogs, message]);
+  };
 
   const mintNFT = async () => {
     if (!window.ethereum) {
@@ -25,10 +30,10 @@ export default function MintNFT() {
       const signer = provider.getSigner();
       const contract = new ethers.Contract(contractAddress, MusicNFT.abi, signer);
 
-      console.log("Minting NFT with the following details:");
-      console.log("Song URL:", songURL);
-      console.log("Cover URL:", coverURL);
-      console.log("Metadata:", metadata);
+      logMessage("Minting NFT with the following details:");
+      logMessage(`Song URL: ${songURL}`);
+      logMessage(`Cover URL: ${coverURL}`);
+      logMessage(`Metadata: ${metadata}`);
 
       const transaction = await contract.mintNFT(
         await signer.getAddress(),
@@ -38,9 +43,15 @@ export default function MintNFT() {
       );
 
       await transaction.wait();
-      alert("NFT minted successfully!");
+      logMessage("NFT minted successfully!");
+
+      // Clear inputs
+      setSongURL('');
+      setCoverURL('');
+      setMetadata('');
     } catch (error) {
       console.error("Minting failed:", error);
+      logMessage(`Minting failed: ${error.message}`);
       if (error.data && error.data.message) {
         alert("Minting failed: " + error.data.message);
       } else {
@@ -50,7 +61,7 @@ export default function MintNFT() {
   };
 
   return (
-    <div>
+    <div style={{ padding: '20px' }}>
       <h2>Mint NFT</h2>
       <input 
         type="text" 
@@ -71,6 +82,15 @@ export default function MintNFT() {
         placeholder="Metadata (e.g., Title)" 
       />
       <button onClick={mintNFT}>Mint NFT</button>
+      <div style={{ marginTop: '20px' }}>
+        <h3>Logs</h3>
+        <textarea
+          rows="10"
+          cols="50"
+          value={logs.join('\n')}
+          readOnly
+        ></textarea>
+      </div>
     </div>
   );
 }
