@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { ethers } from 'ethers';
-import './App.css';
+import '../App.css';
 
 export default function WalletConnect() {
   const [walletAddress, setWalletAddress] = useState("");

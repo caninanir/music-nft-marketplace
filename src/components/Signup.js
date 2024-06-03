@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebaseConfig';
-import './App.css';
+import '../App.css';
 
 export default function Signup() {
   const [email, setEmail] = useState('');

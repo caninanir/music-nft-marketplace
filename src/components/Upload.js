@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage } from '../firebaseConfig';
-import './App.css';
+import '../App.css';
 
 export default function Upload() {
   const [mp3File, setMp3File] = useState(null);

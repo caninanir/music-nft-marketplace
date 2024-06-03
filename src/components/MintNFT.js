@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { ethers } from 'ethers';
 import MusicNFT from '../artifacts/contracts/MusicNFT.json';
-import './App.css';
+import '../App.css';
 
 const contractAddress = "0x2877bE0188d39B71D8A877D38dd611c6631D97f3";
 

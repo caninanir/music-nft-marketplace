@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth } from '../firebaseConfig';
-import './App.css';
+import '../App.css';
 
 export default function AuthStatus() {
   const [user, setUser] = useState(null);
