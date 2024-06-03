@@ -1,13 +1,15 @@
+
 import React, { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import MusicNFT from '../artifacts/contracts/MusicNFT.json';
 
-const contractAddress = "0x9A358482b63b4718F899ee7cA92dfBA4885A5eb6";
+const contractAddress = "0xBe817299AA7ed992cAFD22616D69E67d33e5a535";
 
 export default function Marketplace() {
   const [nfts, setNfts] = useState([]);
   const [logs, setLogs] = useState([]);
   const [selectedPrice, setSelectedPrice] = useState('');
+  const [userAddress, setUserAddress] = useState('');
 
   useEffect(() => {
     loadNFTs();
@@ -29,6 +31,10 @@ export default function Marketplace() {
     logMessage('Loading NFTs from the contract...');
     
     try {
+      const accounts = await provider.send("eth_requestAccounts", []);
+      const userAddress = accounts[0];
+      setUserAddress(userAddress);
+
       const tokenCount = await contract.getTokenCount();
       logMessage(`Token count retrieved: ${tokenCount}`);
       const data = [];
@@ -37,12 +43,14 @@ export default function Marketplace() {
         try {
           const song = await contract.getSong(i);
           const price = await contract.getPrice(i);
+          const owner = await contract.getOwner(i);
           const item = {
             id: i,
             songURL: song.songURL,
             coverURL: song.coverURL,
             metadata: song.metadata,
-            price: ethers.utils.formatEther(price)
+            price: ethers.utils.formatEther(price),
+            owner
           };
           data.push(item);
           logMessage(`NFT ${i} - ${song.metadata} loaded.`);
@@ -112,16 +120,23 @@ export default function Marketplace() {
         <div key={idx}>
           <img src={nft.coverURL} alt={nft.metadata} style={{ width: '200px', height: '200px' }} />
           <h3>{nft.metadata}</h3>
+          <p>Owner: {nft.owner}</p>
           <audio controls src={nft.songURL}></audio>
-          <p>Price: {nft.price} ETH</p>
-          <input
-            type="text"
-            value={selectedPrice}
-            onChange={(e) => setSelectedPrice(e.target.value)}
-            placeholder="Enter price in ETH"
-          />
-          <button onClick={() => setNFTPrice(nft.id)}>Set Price</button>
-          <button onClick={() => buyNFT(nft.id, nft.price)}>Buy with ETH</button>
+          <p>Price: {nft.price > 0 ? `${nft.price} ETH` : 'Not for sale'}</p>
+          {userAddress === nft.owner && (
+            <>
+              <input
+                type="text"
+                value={selectedPrice}
+                onChange={(e) => setSelectedPrice(e.target.value)}
+                placeholder="Enter price in ETH"
+              />
+              <button onClick={() => setNFTPrice(nft.id)}>Put up for Sale</button>
+            </>
+          )}
+          {userAddress !== nft.owner && nft.price > 0 && (
+            <button onClick={() => buyNFT(nft.id, nft.price)}>Buy with ETH</button>
+          )}
         </div>
       ))}
 

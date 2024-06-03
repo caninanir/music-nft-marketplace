@@ -7,7 +7,6 @@ import WalletConnect from './components/WalletConnect';
 import MintNFT from './components/MintNFT';
 import Marketplace from './components/Marketplace';
 import Upload from './components/Upload';
-import ContractInteraction from './components/ContractInteraction';
 
 function App() {
   return (
@@ -20,7 +19,6 @@ function App() {
           <Link to="/mint">Mint NFT</Link>
           <Link to="/marketplace">Marketplace</Link>
           <Link to="/upload">Upload</Link>
-          <Link to="/contractInteraction">ContractInteraction</Link>
         </nav>
 
         <AuthStatus />
@@ -32,7 +30,6 @@ function App() {
           <Route path="/mint" element={<MintNFT />} />
           <Route path="/marketplace" element={<Marketplace />} />
           <Route path="/upload" element={<Upload />} />
-          <Route path="/contractInteraction" element={<ContractInteraction />} />
           <Route path="/" element={<h2>Welcome to Music NFT Marketplace</h2>} />
         </Routes>
       </div>
