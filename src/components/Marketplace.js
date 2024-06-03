@@ -2,13 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import MusicNFT from '../artifacts/contracts/MusicNFT.json';
 
-const contractAddress = "0x707a1dC41eB156cE43580Ca66df717511d42F299";
+const contractAddress = "0x9A358482b63b4718F899ee7cA92dfBA4885A5eb6";
 
 export default function Marketplace() {
   const [nfts, setNfts] = useState([]);
   const [logs, setLogs] = useState([]);
-  const [testNum, setTestNum] = useState('');
-  const [fetchedTestNum, setFetchedTestNum] = useState(null);
+  const [selectedPrice, setSelectedPrice] = useState('');
 
   useEffect(() => {
     loadNFTs();
@@ -37,11 +36,13 @@ export default function Marketplace() {
       for (let i = 1; i <= tokenCount; i++) {
         try {
           const song = await contract.getSong(i);
+          const price = await contract.getPrice(i);
           const item = {
             id: i,
             songURL: song.songURL,
             coverURL: song.coverURL,
-            metadata: song.metadata
+            metadata: song.metadata,
+            price: ethers.utils.formatEther(price)
           };
           data.push(item);
           logMessage(`NFT ${i} - ${song.metadata} loaded.`);
@@ -58,48 +59,7 @@ export default function Marketplace() {
     }
   };
 
-  const handleSetTestNum = async () => {
-    if (!testNum) {
-      alert("Please provide a test number.");
-      return;
-    }
-
-    try {
-      logMessage("Setting test number...");
-
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner();
-      const contract = new ethers.Contract(contractAddress, MusicNFT.abi, signer);
-
-      const transaction = await contract.setTestNum(testNum);
-      await transaction.wait();
-      
-      logMessage(`Test number set to ${testNum} successfully!`);
-      setTestNum('');
-    } catch (error) {
-      console.error("Setting test number failed:", error);
-      logMessage(`Setting test number failed: ${error.message}`);
-    }
-  };
-
-  const handleGetTestNum = async () => {
-    try {
-      logMessage("Getting test number...");
-
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const contract = new ethers.Contract(contractAddress, MusicNFT.abi, provider);
-
-      const num = await contract.getTestNum();
-      setFetchedTestNum(num.toNumber());
-
-      logMessage(`Test number fetched: ${num.toNumber()}`);
-    } catch (error) {
-      console.error("Getting test number failed:", error);
-      logMessage(`Getting test number failed: ${error.message}`);
-    }
-  };
-
-  const buyNFT = async (id) => {
+  const buyNFT = async (id, price) => {
     if (typeof window.ethereum === 'undefined') {
       alert("MetaMask is required to buy an NFT");
       return;
@@ -109,10 +69,39 @@ export default function Marketplace() {
     const signer = provider.getSigner();
     const contract = new ethers.Contract(contractAddress, MusicNFT.abi, signer);
 
-    // assuming the NFT price is fixed and defined in the smart contract
-    // const price = await contract.price();
-    // await contract.buyToken(id, { value: price });
-    alert("NFT purchase functionality to be implemented!");
+    try {
+      logMessage(`Buying NFT ${id} for ${price} ETH...`);
+      const transaction = await contract.buyNFT(id, { value: ethers.utils.parseEther(price) });
+      await transaction.wait();
+      logMessage(`NFT ${id} purchased successfully!`);
+      loadNFTs(); // Refresh NFTs
+    } catch (error) {
+      console.error("Buying failed:", error);
+      logMessage(`Buying failed: ${error.message}`);
+    }
+  };
+
+  const setNFTPrice = async (id) => {
+    if (!selectedPrice) {
+      alert("Please provide a price.");
+      return;
+    }
+
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(contractAddress, MusicNFT.abi, signer);
+
+    try {
+      logMessage(`Setting price for NFT ${id} to ${selectedPrice} ETH...`);
+      const transaction = await contract.setPrice(id, ethers.utils.parseEther(selectedPrice));
+      await transaction.wait();
+      logMessage(`Price for NFT ${id} set to ${selectedPrice} ETH successfully!`);
+      setSelectedPrice('');
+      loadNFTs(); // Refresh NFTs
+    } catch (error) {
+      console.error("Setting price failed:", error);
+      logMessage(`Setting price failed: ${error.message}`);
+    }
   };
 
   return (
@@ -124,21 +113,18 @@ export default function Marketplace() {
           <img src={nft.coverURL} alt={nft.metadata} style={{ width: '200px', height: '200px' }} />
           <h3>{nft.metadata}</h3>
           <audio controls src={nft.songURL}></audio>
-          <button onClick={() => buyNFT(nft.id)}>Buy with ETH</button>
+          <p>Price: {nft.price} ETH</p>
+          <input
+            type="text"
+            value={selectedPrice}
+            onChange={(e) => setSelectedPrice(e.target.value)}
+            placeholder="Enter price in ETH"
+          />
+          <button onClick={() => setNFTPrice(nft.id)}>Set Price</button>
+          <button onClick={() => buyNFT(nft.id, nft.price)}>Buy with ETH</button>
         </div>
       ))}
 
-      <h3>Test Contract Connection</h3>
-      <input
-        type="number"
-        value={testNum}
-        onChange={(e) => setTestNum(e.target.value)}
-        placeholder="Test Number"
-      />
-      <button onClick={handleSetTestNum}>Set Test Number</button>
-      <button onClick={handleGetTestNum}>Get Test Number</button>
-      {fetchedTestNum !== null && <p>Current Test Number: {fetchedTestNum}</p>}
-      
       <div style={{ marginTop: '20px' }}>
         <h3>Logs</h3>
         <textarea
